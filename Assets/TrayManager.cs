@@ -1,8 +1,7 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static UnityEditor.Progress;
 
 public class TrayManager : MonoBehaviour
 {
@@ -10,7 +9,6 @@ public class TrayManager : MonoBehaviour
     public List<Transform> slots;
     public LinkedList<TileController> tiles;
     Queue<IEnumerator> match3Queue = new Queue<IEnumerator>();
-
 
     private void Awake()
     {
@@ -32,16 +30,17 @@ public class TrayManager : MonoBehaviour
             }
         }
     }
-    public Transform PushToSlot(TileController tile)
+    public Transform PushToSlot(TileController newTile)
     {
         int index = 0;
         Transform slot = null;
+
         foreach (var item in tiles)
         {
-            if (item.ID == tile.ID)
+            if (item.ID == newTile.ID)
             {
                 //insert
-                slot = Insert(tile);
+                slot = Insert(newTile);
                 break;
             }
             index++;
@@ -49,22 +48,22 @@ public class TrayManager : MonoBehaviour
 
         if (slot == null)
         {
-            tiles.AddLast(tile);
+            tiles.AddLast(newTile);
             slot = slots[index];
         }
-        match3Queue.Enqueue(IEMatch3(tile));
+        match3Queue.Enqueue(IEMatch3(newTile));
         return slot;
     }
 
     IEnumerator IEMatch3(TileController tile)
     {
         yield return null; // doi 1 frame de tile goi ham MoveToSlot
-        yield return null; // doi 1 frame de tile goi ham MoveToSlot
+        yield return null; // doi 1 frame de chen tile thu 4 cung id vào sau tile thứ 3 trước khi tile đó ăn 3 xong
         yield return new WaitForSeconds(tile.moveDuration);
         EatMatch3();
     }
 
-    Transform Insert(TileController tile)
+    Transform Insert(TileController newTile)
     {
         bool samevalue = false;
         bool slidable = false;
@@ -73,16 +72,16 @@ public class TrayManager : MonoBehaviour
         for (int i = 0; i < tiles.Count;)
         {
             TileController item2 = tiles.ElementAt(i);
-            Debug.Log("i = " + i);
+            //Debug.Log("i = " + i);
             if (slidable)
             {
                 item2.Slide(slots[i]);
-                Debug.LogError($"Slide id = {item2.ID} to index = {i}", item2.transform);
+                //Debug.LogError($"Slide id = {item2.ID} to index = {i}", item2.transform);
             }
-            else if (item2.ID == tile.ID)
+            else if (item2.ID == newTile.ID)
             {
                 samevalue = true;
-                Debug.LogError($"Same value = true || id = {item2.ID} index = {i}", item2.transform);
+                //Debug.LogError($"Same value = true || id = {item2.ID} index = {i}", item2.transform);
 
             }
             else if (samevalue)
@@ -90,18 +89,18 @@ public class TrayManager : MonoBehaviour
                 slidable = true;
                 inserted = true;
                 slotCanMove = slots[i];
-                LinkedListNode<TileController> lastItemSameValue = tiles.Find(item2);
-                tiles.AddBefore(lastItemSameValue, tile);
-                Debug.LogError($"Insert id = {tile.ID} to index = {i}", tile.transform);
+                LinkedListNode<TileController> firstTileDifferentID = tiles.Find(item2);
+                tiles.AddBefore(firstTileDifferentID, newTile);
+                //Debug.LogError($"Insert id = {tile.ID} to index = {i}", tile.transform);
             }
             i++;
         }
 
         if (!inserted)
         {
-            tiles.AddLast(tile);
+            tiles.AddLast(newTile);
         }
-        Debug.LogError($"slidable = {slidable} || samevalue = {samevalue} || slotCanMove = {slotCanMove}", tile.transform);
+        //Debug.LogError($"slidable = {slidable} || samevalue = {samevalue} || slotCanMove = {slotCanMove}", tile.transform);
         if (!slidable)
         {
             slotCanMove = slots[tiles.Count - 1];
@@ -122,11 +121,11 @@ public class TrayManager : MonoBehaviour
 
                 if (count == 3)
                 {
-                    Debug.LogError($"Eat match 3 || id = {item.ID} index = {i}", item.transform);
+                    //Debug.LogError($"Eat match 3 || id = {item.ID} index = {i}", item.transform);
                     for (int j = i; j > i - 3; j--)
                     {
                         TileController item2 = tiles.ElementAt(j);
-                        Debug.LogError($"Eat id = {item2.ID} index = {j}", item2.transform);
+                        //Debug.LogError($"Eat id = {item2.ID} index = {j}", item2.transform);
                         tiles.Remove(item2);
                         Destroy(item2.gameObject);
                     }
@@ -135,7 +134,7 @@ public class TrayManager : MonoBehaviour
                     {
                         TileController item2 = tiles.ElementAt(j);
                         item2.Slide(slots[j]);
-                        Debug.LogError($"Slide id = {item2.ID} to index = {j} after eat", item2.transform);
+                        //Debug.LogError($"Slide id = {item2.ID} to index = {j} after eat", item2.transform);
                     }
                 }
             }
