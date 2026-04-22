@@ -830,6 +830,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfcc49677b3688d458c9123285a85203, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  slots:
+  - {fileID: 1342104082}
+  - {fileID: 1100605287}
+  - {fileID: 1512557576}
+  - {fileID: 394836890}
+  - {fileID: 1237906481}
+  - {fileID: 1527256497}
+  - {fileID: 64608121}
+  - {fileID: 343856993}
+  - {fileID: 1565648236}
+  - {fileID: 234070511}
+  - {fileID: 1739073289}
+  - {fileID: 547172223}
+  - {fileID: 642701197}
+  tiles: []
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
