@@ -7,28 +7,36 @@ public class TileController : MonoBehaviour
 {
     public int ID;
     public float moveDuration = 0f;
-    private float speed = 30;
+    [SerializeField] private float speed = 3;
 
-    private Tween move;
+    private Tween moveTween;
 
     private void OnMouseDown()
     {
-        moveDuration = 0f;
-        var slot = TrayManager.Instance.PushToSlot(this);
+        GetComponent<Collider2D>().enabled = false;
+
+        //moveDuration = 0f;
+        var slot = TrayManagerV2.Instance.PushToSlot(this);
         MoveToSlot(slot);
     }
 
-    void MoveToSlot(Transform slot)
+    private void MoveToSlot(Transform slot)
     {
-        move = Tween.PositionAtSpeed(transform, slot.position, speed, Ease.Linear);
         moveDuration = Vector3.Distance(transform.position, slot.position) / speed;
+        moveTween = Tween.PositionAtSpeed(transform, slot.position, speed, Ease.Linear);
         //Debug.LogError("Move duration 1= " + moveDuration);
     }
 
-    public float Slide(Transform slot)
+    public void Slide(Transform slot)
     {
-        move.Stop();
-        move = Tween.PositionAtSpeed(transform, slot.position, speed, Ease.Linear);
-        return Vector3.Distance(transform.position, slot.position) / speed;
+        moveTween.Stop();
+        moveTween = Tween.PositionAtSpeed(transform, slot.position, speed, Ease.Linear);
     }
+
+    //public float Slide(Transform slot)
+    //{
+    //    moveTween.Stop();
+    //    moveTween = Tween.PositionAtSpeed(transform, slot.position, speed, Ease.Linear);
+    //    return Vector3.Distance(transform.position, slot.position) / speed;
+    //}
 }
